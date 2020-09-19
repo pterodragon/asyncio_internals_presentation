@@ -88,13 +88,16 @@ Traceback (most recent call first):
 ```
 
 # `Task`
+
 1. `task.Task`
 2. C `_asyncio_Task___init___impl`
 3. `task.call_soon` -> `task._call_soon` 
 4. `self._ready.append(handle)`
 
 # `_UnixSelectorEventLoop`
-1. `loop.run_forever()`
+
+The loop style doesn't affect coroutines, but rather how the fds are polled
+1. `loop.run_until_complete(...)` -> `loop.run_forever()`
 2. `self._run_once()`
 `self._scheduled` ? `loop.call_at` never called in the app, so irrelevant
 3. `handle._run()`
@@ -102,4 +105,15 @@ Traceback (most recent call first):
 5. C `context_run` -> C `TaskStepMethWrapper_call` -> C `task_step` -> C `task_step_imp`
 6. C `result = _PyGen_Send((PyGenObject*)coro, Py_None);`
 
+# `asyncio.run(...)`
 
+1. `loop.run_until_complete(main)`
+2. finalize
+    - `_cancel_all_tasks(loop)`
+    - `loop.run_until_complete(loop.shutdown_asyncgens())`
+
+# What does `self._run_once()` do?
+
+- there's a queue (FIFO) `self._ready`
+- run tasks in order until all are done
+- tasks that are spawned/suspended get put back to the queue in order

@@ -1,0 +1,31 @@
+\documentclass[compress,usenames,dvipsnames]{beamer}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{adjustbox}
+\usecolortheme{crane}
+
+\author{Wing}
+\title{Asyncio Internals}  
+
+\begin{document}
+\date{\today} 
+
+\frame[plain]{\titlepage} % [plain] means it doesn't show the section above the Header 
+
+\frame[plain]{\frametitle{Table of contents}
+    \small
+    \tableofcontents[hideallsubsections]
+}  
+
+\begin{frame}[plain]
+    % \begin{adjustbox}{max totalsize={2\textwidth}{2\textheight},center}
+    %         \input{./mytikz.tex}
+    % \end{adjustbox}
+    \begin{center}
+        \resizebox{\textwidth}{!}{%
+            \input{./mytikz.tex}
+        }
+    \end{center}
+\end{frame}
+
+\end{document}
