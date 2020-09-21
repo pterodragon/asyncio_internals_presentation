@@ -1,51 +1,78 @@
+from itertools import cycle
 import tikzplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.transforms as mtransforms
 import matplotlib.patches as mpatch
 from matplotlib.patches import FancyBboxPatch
 from matplotlib import cm
 from matplotlib.collections import PatchCollection
+import cycler
 
-from dimagine.drawable import Rect, Drawable
+from dimagine.drawable import RRect, Drawable, Ellipse, Line, Text
 from dimagine.ds import DTree
+from dimagine.matplotlib.draw import MPlotDrawer
+
+import re
+
+def _tex_sanitize(s):
+    """Sanitizes a string so that it can be properly compiled in TeX.
+    Escapes the most common TeX special characters: ~^_#%${}
+    Removes backslashes.
+    """
+    s = re.sub('\\\\', '', s)
+    s = re.sub(r'([_^$%&#{}])', r'\\\1', s)
+    s = re.sub(r'\~', r'\\~{}', s)
+    return s
+default_color_cycler = mpl.rcParams['axes.prop_cycle']
+cmap_q = cm.get_cmap('Pastel1')
+c_cycle = cycle(default_color_cycler.by_key()['color'])
+c_cycle2 = cycle(cmap_q.colors)
 
 def build_dtree():
-    dt = DTree([Rect((x + 1, 1), (x + 3, 3)) for x in range(0, 21, 5)])
-    dt.root.add_child(Rect((10, 0), (10 + 2, 2)))
+    root = Ellipse((1, 1), (5, 5))
+    curr = root
+
+    for dx in range(4):
+        curr = curr.conn(curr.trans(x=5))
+    curr = curr.conn(curr.morph(RRect).trans(x=5).scale(y=1.5))
+    curr = curr.conn(curr.trans((5, 20)))
+    curr = curr.conn(curr.morph(Ellipse).trans((5, -20)))
+    curr = curr.conn(curr.morph(RRect, facecolor=next(c_cycle2)).trans(x=5).expand(x=10))
+    curr = curr.text_label(_tex_sanitize('d_$2'), 36)
+    dt = DTree(root)
+    
     return dt
 
+def build_lines():
+    root = Line((0, 0), (30, 0))
+    dt = DTree(root)
+    return dt
+
+
 dt = build_dtree()
+dt_line = build_lines()
 
 figax = plt.subplots()
 fig: plt.Figure = figax[0]
-fig.set_figheight(5)
-fig.set_figwidth(10)
 ax: plt.Axes = figax[1]
-ax.autoscale(True)
 
-def build_boxes(dt: DTree):
-    patches = []
-    def build_patch(da: Drawable):
-        fancybox = mpatch.FancyBboxPatch(
-            da.bbox.bl, *da.bbox.wh,
-            boxstyle=mpatch.BoxStyle("Round", pad=1),
-            facecolor='white', edgecolor='black'
-            )
-        patches.append(fancybox)
-    dt.dfs(build_patch)
+# ax.text(2, 6, r'an equation: $E=mc^2$', fontsize=15)
+drawer = MPlotDrawer(ax, [dt, dt_line])
+drawer.draw()
+# tikzplotlib.clean_figure()
+eap = []
+eap = ["x=15pt", "y=15pt"]
+# eap += [ "xmajorticks=false" ]
+# eap += ["hide axis"]
+eap.append('ticks=none')
 
-    return patches
-
-for patch in build_boxes(dt):
-    ax.add_artist(patch)
-(bl_x, bl_y), (tr_x, tr_y) = dt.bbox
-
-m = max(tr_x, tr_y) + 2
-ax.set_xlim((0, m + 100))
-ax.set_ylim((0, m))
-ax.set_aspect('equal')
-# ax.set_axis_off()
-
-tikzplotlib.save("mytikz.tex")
-plt.show()
+tikzplotlib.save(
+    "mytikz.tex",
+    extra_axis_parameters=eap,
+    axis_width="180pt",
+    axis_height="180pt",
+)
+# write text inside shape... # arrows?
+# plt.show()
 
