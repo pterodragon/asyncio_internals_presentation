@@ -21,6 +21,9 @@
 ## concurrency from the ground up
 - talk: `https://www.youtube.com/watch?v=MCs5OvhV9S4`
 
+## simple event loop implementation
+- https://github.com/AndreLouisCaron/a-tale-of-event-loops
+
 ## callbacks vs promises
 - https://stackoverflow.com/questions/22539815/arent-promises-just-callbacks
     - inversion of control
@@ -126,6 +129,16 @@ Some part is implemented in C, `Lib/asyncio/task.py` `def __step` demonstrates t
 6a. C `result = _PyGen_Send((PyGenObject*)coro, Py_None);`
 6b. C `if (result == NULL)` (generator returns None / StopException raised)
 6c. C `res = future_set_result((FutureObj*)task, o);`
+### python implementation (instead of C)
+p4. `self._context.run(self._callback, *self._args)`
+p5a. `Lib/asyncio/tasks.py` `def __step(self, exc=None)`
+p5b. `super().set_result(exc.value)` (generator returns None / StopException raised)
+p5ca. `blocking = getattr(result, '_asyncio_future_blocking', None) is True`
+    -> generator(future) yielded itself
+p5cb. `super().set_result(exc.value)` set the future result from the generator return value
+
+
+
 
 (6a.) demonstrates that stepping means "continuing" a generator
 

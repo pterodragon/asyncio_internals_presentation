@@ -1,15 +1,31 @@
 import asyncio
 
 
+def gen2():
+    print("in gen2")
+    return 100
+    # code never reaches here
+    yield  # just force this to be a generator
+
+
 def gen1():
     print("in gen1")
+    res = yield from gen2()
+
+    # Question: what does `yield` correspond to in a coroutine?
+    # Hint: `yield` gives up control of the generator
+    # yield
+    return res
+
+
+async def coro2():
     return 100
-    yield  # just to force this function to be a generator
 
 
 async def coro1():
     print("in coro1")
-    return 100
+    res = await coro2()
+    return res
 
 
 coro1_res = asyncio.run(coro1())
