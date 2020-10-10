@@ -89,6 +89,11 @@ Traceback (most recent call first):
   File "../../dev/python_project/tcp_echo_server.py", line 27, in <module>
     asyncio.run(main())
 ```
+#### to use Python implementation of `asyncio` instead of C implementation
+- remove the "asyncio" line in `./Modules/Setup`
+- remove `Modules/_asynciomodule.c`
+- `./configure` again
+- `make`
 
 # Code dive
 ## `Task`
