@@ -23,7 +23,8 @@ def gen1():
     loop = asyncio.get_event_loop()
     loop.call_soon(partial(count_down, fut, 2))
 
-    # this "fut" will yield itself until result is set, then it yields the result
+    # this gen1 coro will always yield "fut" until result is set, then it yields the result
+    # when fut is not done, usually there are other tasks to run, if not the selector will block
     res = yield from fut
 
     # Once you understand "yield from fut", "asyncio.sleep" is easy to understand
@@ -37,4 +38,4 @@ async def coro1():
 
 
 coro1_res = asyncio.run(coro1())
-print("coro1_res", coro1_res)
+print(f"{coro1_res = }")

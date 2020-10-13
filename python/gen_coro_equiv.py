@@ -28,8 +28,8 @@ async def coro1():
     return res
 
 
-coro1_res = asyncio.run(coro1())
-print("coro1_res", coro1_res)
+coro1_res = asyncio.run(coro1())  # ??? :)
+print(f"{coro1_res = }")
 
 gen1_res = asyncio.run(gen1())
-print("gen1_res", gen1_res)
+print(f"{gen1_res = }")

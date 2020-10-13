@@ -32,6 +32,34 @@
 ## magic behind generator
 - https://hackernoon.com/the-magic-behind-python-generator-functions-bc8eeea54220
 
+## for loop expansion
+- https://opensource.com/article/18/3/loop-better-deeper-look-iteration-python
+```
+def funky_for_loop(iterable, action_to_do):
+    iterator = iter(iterable)
+    done_looping = False
+    while not done_looping:
+        try:
+            item = next(iterator)
+        except StopIteration:
+            done_looping = True
+        else:
+            action_to_do(item)
+```
+
+## Iterator, Iterable, generator
+Iterables have `__iter__` that returns an "Iterator"
+Iterators have `__next__` and and `__iter__` method that does `return self`
+```
+>>> next(range(5))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'range' object is not an iterator
+```
+Every generator is an iterator, but not vice versa
+
+
+
 ### notes
 - `yield` causes state explosion
 - there's no control over how long a task can run. Task gives up control voluntarily via `yield`
@@ -134,7 +162,10 @@ p4. `self._context.run(self._callback, *self._args)`
 p5a. `Lib/asyncio/tasks.py` `def __step(self, exc=None)`
 p5b. `super().set_result(exc.value)` (generator returns None / StopException raised)
 p5ca. `blocking = getattr(result, '_asyncio_future_blocking', None) is True`
-    -> generator(future) yielded itself
+    -> result is a future which is yielded by `yield from` and its __iter__ has been called
+        (after that `yield self` line in the future, the future must be done else it's an error)
+    -> `result.add_done_callback(self.__wakeup, context=self._context)`
+
 p5cb. `super().set_result(exc.value)` set the future result from the generator return value
 
 
@@ -145,7 +176,10 @@ p5cb. `super().set_result(exc.value)` set the future result from the generator r
 ## `asyncio.run(...)`
 
 1. `loop.run_until_complete(main)`
-2. finalize
+2. `future = tasks.ensure_future(future, loop=self)` -> `loop.create_task` -> `task = tasks.Task(coro, loop=self, name=name)`
+   -> `self._loop.call_soon(self.__step, context=self._context)`
+
+3. finalize
     - `_cancel_all_tasks(loop)`
     - `loop.run_until_complete(loop.shutdown_asyncgens())`
 
@@ -210,3 +244,9 @@ why not `for e in self._ready` -> because during the iteration, things can be ad
 `add_reader` `add_writer` => fd based
 
 
+# My talk flow:
+- give overview of everything
+- event loop, single threaded
+- event loop maintains a queue of tasks
+- task or future is bounded to a loop
+- task = future + corountine
