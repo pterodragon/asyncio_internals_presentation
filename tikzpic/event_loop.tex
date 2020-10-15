@@ -1,0 +1,25 @@
+\begin{tikzpicture}[
+    srrect/.style={rounded corners,minimum width=20pt,minimum height=20pt},
+    sarr/.style={-stealth},font=\sffamily,font=\small,
+    node distance=10pt
+    ]
+    \begin{scope}[start chain=going right,node distance=2pt,nodes={srrect,on chain}]
+        \node[draw] (A2){H1};
+        \node[draw] (B2){H2};
+        \node[draw] (C2){H3};
+        \node[draw] (D2){H4};
+        \node[] (E2){$\cdots$};
+    \end{scope}
+    \node[fit=(A2) (E2)](F2){};
+    \foreach \X in {north,south}
+    {\draw[sarr,gray!50]  (F2.\X\space east) -- (F2.\X\space west);}
+    \node[draw, fit=(F2), inner sep=10pt, dotted] (tq) {};
+    \node[fill=white] (tqlabel) at (tq.north west) {Handle queue};
+    \node[below=of tq, yshift=-20pt] (phan) {};
+    \matrix[column sep=-\pgflinewidth, matrix of nodes, nodes={draw}, minimum size=25pt] (sh) at (phan.center) { SH1 & SH2 & SH3 & |[draw=none]|$\cdots$\\};
+    \node[draw, dotted, fit= (sh) (tq.west |- phan.center) (tq.east |- phan.center), inner xsep=0pt, inner ysep=5pt] (shbox) {};
+    \node[fill=white] (shlabel) at (shbox.north west) {scheduled};
+
+    \node[draw, fit=(tq) (tqlabel) (shlabel) (shbox), inner sep=5pt, dotted] (eloop) {};
+    \node[fill=white] (ellabel) at (eloop.north west) {Event loop};
+\end{tikzpicture}

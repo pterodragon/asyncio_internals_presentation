@@ -1,8 +1,31 @@
 \documentclass[compress,usenames,dvipsnames]{beamer}
 \usepackage{tikz}
-\usepackage{pgfplots}
 \usepackage{adjustbox}
 \usecolortheme{crane}
+
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{bera}
+\usepackage{pgfplots}
+\usepackage{courier}
+\DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows,arrows,positioning,backgrounds,fit,chains,matrix}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily,
+    otherkeywords={self},             
+    keywordstyle=\ttfamily\color{blue!90!black},
+    keywords=[2]{True,False},
+    keywords=[3]{ttk},
+    keywordstyle={[2]\ttfamily\color{yellow!80!orange}},
+    keywordstyle={[3]\ttfamily\color{red!80!orange}},
+    emph={MyClass,__init__},          
+    emphstyle=\ttfamily\color{red!80!black},    
+    stringstyle=\color{green!80!black},
+    showstringspaces=false            
+}
 
 \author{Wing}
 \title{Asyncio Internals}  
@@ -17,15 +40,30 @@
     \tableofcontents[hideallsubsections]
 }  
 
-\begin{frame}[plain]
-    % \begin{adjustbox}{max totalsize={2\textwidth}{2\textheight},center}
-    %         \input{./mytikz.tex}
-    % \end{adjustbox}
+\begin{frame}[plain, t, fragile]
+    \frametitle{Event loop}
     \begin{center}
-        \resizebox{\textwidth}{!}{%
-            \input{./mytikz.tex}
-        }
+    \begin{adjustbox}{margin=10pt}
+         \input{./tikzpic/event_loop.tex}
+    \end{adjustbox}
+    \end{center}
+    {\ttfamily{Handle}} wraps \verb|Task.__step|
+\end{frame}
+
+\begin{frame}[plain, t]
+    \frametitle{Task}
+    \begin{center}
+    \begin{adjustbox}{margin=10pt}
+             \input{./tikzpic/task_future.tex}
+    \end{adjustbox}
     \end{center}
 \end{frame}
+
+% \begin{frame}[plain, t, fragile]
+%     \begin{lstlisting} 
+%     def under__attack(col, queens):
+%         left = right = col
+%     \end{lstlisting}
+% \end{frame}
 
 \end{document}

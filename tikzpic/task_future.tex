@@ -1,0 +1,28 @@
+\begin{tikzpicture}[
+array/.style={
+    matrix of nodes,
+    nodes={
+        draw,
+        text centered,
+        text width=20pt,
+        minimum size=25pt
+    },
+    column sep=-\pgflinewidth,
+    nodes in empty cells,
+    align=center,
+    text centered
+    },
+    node distance=10pt
+]
+
+\matrix[array] (futcbarr) { cb1 & cb2 & cb3 &|[draw=none]|$\cdots$\\};
+\node[draw, dotted, fit=(futcbarr), inner sep=5pt] (futcbbox) {};
+\node[fill=white] (futcblabel) at (futcbbox.north west) {callbacks};
+\node[draw, dotted, fit=(futcbarr) (futcblabel), inner sep=10pt] (futbox) {};
+\node[fill=white] (futlabel) at (futbox.north west) {Future};
+\node[below=of futbox] (coroboxcontent) {Coroutine};
+\node[draw, inner sep=0, fit=(futbox.west |- coroboxcontent.center) (futbox.east |- coroboxcontent.center) (coroboxcontent)] (corobox) {};
+\node[draw, dotted, fit=(corobox) (futbox) (futlabel), inner sep=10pt] (taskbox) {};
+\node[fill=white] (tasklabel) at (taskbox.north west) {Task};
+
+\end{tikzpicture}

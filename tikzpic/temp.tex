@@ -1,0 +1,81 @@
+
+\tikzset{
+csbox/.style={
+    rectangle,
+    draw, thick, 
+    minimum height=8mm, minimum width=35mm,
+    text width =\pgfkeysvalueof{/pgf/minimum width}-2*\pgfkeysvalueof{/pgf/inner xsep},
+    align=center
+},  
+ocbox/.style={
+    rectangle,       
+    minimum height=8mm, minimum width=28mm,
+    text width =\pgfkeysvalueof{/pgf/minimum width}-2*\pgfkeysvalueof{/pgf/inner xsep},
+    align=center
+},      
+container/.style={% we don't draw them any more but use them for bookkeeping
+    rectangle,opacity=0, 
+    %draw, blue, dashed, thick,
+    inner sep=3mm, yshift=1mm,outer sep=0pt,
+    node contents={}
+},      
+container2/.style={
+    rectangle,
+    draw, thick,
+    inner sep=3mm, yshift=1mm,
+    node contents={}
+},
+fake box/.style={inner sep=0pt,node contents={}},
+true container/.style={
+    draw, blue, dashed, thick,
+    inner sep=3mm, yshift=1mm,inner sep=0pt,
+    node contents={},label={[align=right,name=oc\X]left:#1}
+},     
+}
+\begin{tikzpicture}[
+node distance=8mm and 4mm,
+]
+
+\node (c1) [csbox] {Box 1};
+\node (c2) [csbox, left=of c1] {Box 2};
+\node (c3) [csbox, right=of c1, , fill=black!20] {Box 3};   
+\node (c4) [csbox, right=of c3, , fill=black!20] {Box 4};
+\node (container1) [container,yshift=-1mm, fit=(c1) (c2) (c3) (c4)];
+%\node (oc1) [ocbox, left=of container1] {Outer Box 1};
+
+\node (d1) [csbox, above=of c1, xshift=2cm] {Box 5};
+\node (d3) [csbox, left=of d1, xshift=-1.5cm] {Box 6};
+\node (d6) [csbox, right=of d1, fill=black!20, xshift=1.5cm] {Box 7};
+\node (container2) [container,yshift=-1mm, fit=(d1) (d3) (d6)];
+%\node (oc2) [ocbox, left=of container2] {Outer Box 2};
+
+\node (v1) [csbox, above=of d1] {Box 8};
+\node (v2) [csbox, above=of d3] {Box 9};
+\node (v3) [csbox, above=of d6, fill=black!20] {Box 10};
+\node (container3) [container,yshift=-1mm, fit=(v1) (v2) (v3)];
+%\node (oc3) [ocbox, left=of container3] {Outer Box 3};
+
+\node (n1) [csbox, below left=of c4, xshift=1.5cm, minimum width=45mm] {Box 11};
+\node (n2) [csbox, below right=of c2, xshift=-1.5cm] {Box 12};  
+\node (container4) [container,yshift=-1mm, fit=(n1)(n2)];
+%\node (oc4) [ocbox, left=of container4] {Outer Box 4};
+
+\node (u1) [csbox, above=of v1] {Box 13};
+\node (u2) [csbox, above=of v2] {Box 14};
+\node (u3) [csbox, above=of v3, fill=black!20] {Box 15};
+\node (container5) [container,yshift=-1mm, fit=(u1) (u2) (u3)];
+%\node (oc5) [ocbox, left=of container5] {Outer Box 5};  
+
+
+\xdef\Lst{}
+\foreach \X in {1,...,5}
+{\xdef\Lst{\Lst (container\X)}}
+\node (phantom) [draw, fake box,fit=\Lst];
+\foreach \X in {1,...,5}
+{\node [true container={Outer box \X\\ another line},fit=(container\X) (phantom.west |- container\X.center) % (phantom.west |- container\X.center)
+(phantom.east |- container\X.center)];}
+
+% \node (ooc1)[container2,yshift=-1mm, fit=(container1) (container2) (container3) (container4) (container5) (oc1) (oc2) (oc3) (oc4) (oc5)];
+
+
+\end{tikzpicture}
