@@ -178,27 +178,31 @@ class Future:
 \lstinline{__schedule_callbacks()} effectively moves all callbacks to \colorbox{SkyBlue}{Handle queue}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}[plain, fragile]
     \frametitle{\lstinline{loop.call_soon(callback)}}
-    \begin{algorithm}[H]
-        \SetAlgoNoEnd
-        \DontPrintSemicolon
-        \Fn{\upshape \lstinline{call_soon(callback)}}{
-            \lstinline{handle = Handle(callback)} \\
-            \colorbox{SkyBlue}{Handle queue}\lstinline{.append(handle)} \\
-            \Return \lstinline{handle}
-        }
-    \end{algorithm}
+    \begin{lstlisting}
+class Loop:
+    def call_soon(self, callback):
+        handle = Handle(callback)
+    \end{lstlisting}
+\phantom{\lstinline{aaaaaaaa}} \colorbox{SkyBlue}{Handle queue}\lstinline{.append(handle)}
+    \begin{lstlisting}
+        return handle
+    \end{lstlisting}
 \end{frame}
 
 \begin{frame}[plain, fragile]
     \frametitle{\lstinline{loop.run_forever()}}
     \begin{lstlisting}
-def run_forever():
-    while True:
-        self._run_once()
-        if self._stopping:
-            break
+class Loop:
+    def run_forever(self):
+        while True:
+            self._run_once()
+            if self._stopping:
+                break
+
+    def _run_once(self):
+        ...
     \end{lstlisting}
 \end{frame}
 
