@@ -14,12 +14,29 @@
     \foreach \X in {north,south}
     {\draw[sarr,gray!50]  (F2.\X\space east) -- (F2.\X\space west);}
     \node[draw, fit=(F2), inner sep=10pt, dotted] (tq) {};
-    \node[fill=white] (tqlabel) at (tq.north west) {Handle queue};
+    \node[fill=SkyBlue] (tqlabel) at (tq.north west) {Handle queue};
     \node[below=of tq, yshift=-20pt] (phan) {};
-    \matrix[column sep=-\pgflinewidth, matrix of nodes, nodes={draw}, minimum size=25pt] (sh) at (phan.center) { SH1 & SH2 & SH3 & |[draw=none]|$\cdots$\\};
-    \node[draw, dotted, fit= (sh) (tq.west |- phan.center) (tq.east |- phan.center), inner xsep=0pt, inner ysep=5pt] (shbox) {};
-    \node[fill=white] (shlabel) at (shbox.north west) {scheduled};
+    \begin{scope}[
+        every node/.style={draw,rounded corners},
+        level 1/.style={sibling distance=80pt},
+        level 2/.style={sibling distance=40pt},
+        align=center,
+        level distance=30pt
+        ]
+    \node (mheap) at (phan) {SH1 \\ $t=1$}
+        child {node {SH2 \\ $t=4$}
+            child {node[draw=none] (mheapl) {$\cdots$}}
+            child {node[draw=none] {$\cdots$}}
+        }
+        child {node {SH3 \\ $t=6$}
+            child {node[draw=none] {$\cdots$}}
+            child {node[draw=none] (mheapr) {$\cdots$}}
+        };
+    \end{scope}
 
-    \node[draw, fit=(tq) (tqlabel) (shlabel) (shbox), inner sep=5pt, dotted] (eloop) {};
+    \node[draw, dotted, fit= (mheap) (mheapr) (mheapl) (tq.west |- phan.center) (tq.east |- phan.center), inner xsep=5pt, inner ysep=5pt] (shbox) {};
+    \node[fill=Lavender] (shlabel) at (shbox.north west) {scheduled heap};
+
+    \node[draw, fit=(tq) (tqlabel) (shlabel) (shbox), inner sep=10pt, dotted] (eloop) {};
     \node[fill=white] (ellabel) at (eloop.north west) {Event loop};
 \end{tikzpicture}

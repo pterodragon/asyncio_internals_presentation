@@ -70,7 +70,7 @@
 \begin{frame}[plain, t, fragile]
     \frametitle{Event loop}
     \begin{center}
-    \begin{adjustbox}{margin=10pt}
+    \begin{adjustbox}{}
          \input{./tikzpic/event_loop.tex}
     \end{adjustbox}
     \end{center}
@@ -175,6 +175,7 @@ class Future:
             raise self._exception
         return self._result
     \end{lstlisting}
+\lstinline{__schedule_callbacks()} effectively moves all callbacks to \colorbox{SkyBlue}{Handle queue}
 \end{frame}
 
 \begin{frame}[plain]
@@ -210,7 +211,7 @@ def run_forever():
             \[\text{\lstinline{timeout}} = 
             \begin{cases}
                 0, & \text{if \colorbox{SkyBlue}{Handle queue} is not empty} \\
-                \text{minimal timeout}, & \text{if \colorbox{Lavender}{scheduled} is not empty} \\
+                \text{minimal timeout}, & \text{if \colorbox{Lavender}{scheduled heap} is not empty} \\
                 \text{None}, & \text{otherwise}
 \end{cases}
 \]
@@ -219,7 +220,7 @@ def run_forever():
             \lstinline{ev_list = self._selector.select(timeout)} \\
             \lstinline{self._process_events(ev_list)} \\
             \;
-            \colorbox{SkyBlue}{Handle queue} \lstinline{+=} handles from \colorbox{Lavender}{scheduled} which the time is up \\
+            \colorbox{SkyBlue}{Handle queue} \lstinline{+=} handles from \colorbox{Lavender}{scheduled heap} which the time is up \\
             \;
             \lstinline{handles =} pop all from \colorbox{SkyBlue}{Handle queue} \\
             \For{\upshape \lstinline{handle: handles}} {

@@ -17,10 +17,12 @@ array/.style={
 
 \matrix[array] (futcbarr) { cb1 & cb2 & cb3 &|[draw=none]|$\cdots$\\};
 \node[draw, dotted, fit=(futcbarr), inner sep=5pt] (futcbbox) {};
+\node[below=of futcbbox] (phan) {\&loop};
+\node[draw, fit=(futcbbox.west |- phan.center) (futcbbox.east |- phan.center), inner xsep=0pt, inner ysep = 10pt] (loopbox) {};
 \node[fill=white] (futcblabel) at (futcbbox.north west) {callbacks};
-\node[draw, dotted, fit=(futcbarr) (futcblabel), inner sep=10pt] (futbox) {};
+\node[draw, dotted, fit=(futcbarr) (futcblabel) (loopbox), inner sep=10pt] (futbox) {};
 \node[fill=white] (futlabel) at (futbox.north west) {Future};
-\node[below=of futbox] (coroboxcontent) {Coroutine};
+\node[below=of futbox] (coroboxcontent) {coroutine};
 \node[draw, inner sep=0, fit=(futbox.west |- coroboxcontent.center) (futbox.east |- coroboxcontent.center) (coroboxcontent)] (corobox) {};
 \node[draw, dotted, fit=(corobox) (futbox) (futlabel), inner sep=10pt] (taskbox) {};
 \node[fill=white] (tasklabel) at (taskbox.north west) {Task};
