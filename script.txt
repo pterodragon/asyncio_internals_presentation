@@ -1,0 +1,10 @@
+Actually await == yield from,
+Imagine you are this coroutine.
+during the execution of line 4, you will go to search the next "yield" statement within yourself.
+In the simplest case, this would hit your own return statement, and StopIteration will be raised. So program goes to line 6, and the returned value of this coroutine is set to the task result.
+Similarly when an exception occurs midway during the searching of the next "yield" statement, the exception is propagated back to the task result.
+In the most complex case, you would hit a "yield" statement in another future (or task), which is the `yield self` statement in the `__iter__` method of that future. This only occurs when there is `await fut` or `yield from` in yourself. So `result` is set to that another future which you await for. And then line 10 is hit, and line 11 says that whenever that future you await for is done, wake this task up again, and then try to make you move again. You won't move unless the future you await for is done.
+
+---
+There's a possibility that you'll hit bare yield statement during your search. That means you want to give up your control back to the event loop, and at the next iteration of the event loop, you will move again.
+

@@ -24,6 +24,7 @@
     keywords=[3]{ttk},
     keywords=[4]{yield},
     keywords=[5]{next},
+    keywords=[6]{await},
     keywordstyle={[2]\ttfamily\color{orange}},
     keywordstyle={[3]\ttfamily\color{red!80!orange}},
     keywordstyle={[4]\ttfamily\color{blue!90!black}},
@@ -74,7 +75,7 @@
          \input{./tikzpic/event_loop.tex}
     \end{adjustbox}
     \end{center}
-    {\ttfamily{Handle}} wraps \verb|Task.__step|
+    {\ttfamily{Handle}} wraps \verb|def callback(fut)| (e.g. \verb|Task.__step|)
 \end{frame}
 
 \section{Task}
@@ -92,7 +93,7 @@
 
 \begin{frame}[plain, fragile]
     \frametitle{\lstinline{asyncio.run(main)}}
-    \begin{lstlisting}
+    \begin{lstlisting}[numbers=left]
 def run(main):
     loop = new_event_loop()
     return loop.run_until_complete(main)
@@ -130,7 +131,7 @@ class Task(Future):
 \begin{frame}[plain, fragile]
     \frametitle{\lstinline{Future}}
     \scriptsize
-    \begin{lstlisting}
+    \begin{lstlisting}[numbers=left]
 
 class Future:
     def __init__(self, loop):
@@ -154,7 +155,7 @@ class Future:
 \begin{frame}[plain, fragile]
     \frametitle{\lstinline{Future}}
     \scriptsize
-    \begin{lstlisting}
+    \begin{lstlisting}[numbers=left]
 
 class Future:
     ...
@@ -179,11 +180,11 @@ class Future:
 \end{frame}
 
 \begin{frame}[plain, fragile]
-    \frametitle{\lstinline{loop.call_soon(callback)}}
+    \frametitle{\lstinline{loop.call_soon(callback, *args)}}
     \begin{lstlisting}
 class Loop:
-    def call_soon(self, callback):
-        handle = Handle(callback)
+    def call_soon(self, callback, *args, ...):
+        handle = Handle(callback, *args)
     \end{lstlisting}
 \phantom{\lstinline{aaaaaaaa}} \colorbox{SkyBlue}{Handle queue}\lstinline{.append(handle)}
     \begin{lstlisting}
@@ -237,7 +238,7 @@ class Loop:
 \begin{frame}[plain, fragile]
     \frametitle{\lstinline{Task.__step(exc)}}
     \scriptsize
-    \begin{lstlisting}
+    \begin{lstlisting}[numbers=left]
 def __step(exc):
     coro = self._coro
     try:
@@ -257,6 +258,10 @@ def __wakeup(self, future):
     ...
     self.__step()
     \end{lstlisting}
+
+\begin{itemize}
+    \item {\lstinline{await}} $\equiv$ {\lstinline{yield from}}
+\end{itemize}
 \end{frame}
 
 \begin{frame}[plain]
