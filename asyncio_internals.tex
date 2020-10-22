@@ -99,17 +99,17 @@ def run(main):
 
 class Loop:
     def run_until_complete(coro_or_fut):
-        task = ensure_future(coro_or_fut)
+        task = ensure_future(coro_or_fut,
+                             loop=self)
         task.add_done_callback(<<stop loop>>)
         loop.run_forever()
         return task.result()
 
-def ensure_future(coro_or_fut):
+def ensure_future(coro_or_fut, *, loop):
     if isinstance(coro_or_fut, Future)
         return coro_or_fut
-    else:
-        # coro
-        return Task(coro_or_fut, loop=self)
+    else: # coro
+        return Task(coro_or_fut, loop=loop)
 
     \end{lstlisting}
 \end{frame}
@@ -249,8 +249,8 @@ def __step(exc):
     else:
         if result <<is a blocking future>>:
             result.add_done_callback(self.__wakeup)
-    elif result is None:  # bare yield used
-        self._loop.call_soon(self.__step)
+        elif result is None:  # bare yield used
+            self._loop.call_soon(self.__step)
 
 def __wakeup(self, future):
     # check if cancelled or errored
@@ -275,5 +275,6 @@ def __wakeup(self, future):
         Talk by Saúl Ibarra Corretgé in PyGrunn 2014
         \url{https://www.youtube.com/watch?v=HppNu0-ANYw} 
     \end{thebibliography}
+    Code based on Python 3.8.2
 \end{frame}
 \end{document}
