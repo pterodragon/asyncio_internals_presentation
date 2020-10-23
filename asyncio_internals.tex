@@ -124,6 +124,8 @@ class Task(Future):
         ...
         self._coro = coro
         self._loop.call_soon(self.__step, ...)
+
+    ...
     
     \end{lstlisting}
 \end{frame}
