@@ -229,7 +229,7 @@ class Loop:
             \;
             \lstinline{handles =} pop all from \colorbox{SkyBlue}{Handle queue} \\
             \For{\upshape \lstinline{handle: handles}} {
-                \lstinline{handle._run()} // runs \lstinline{task.__step}
+                \lstinline{handle._run()} // may run \lstinline{task.__step}
             }
         }
     \end{algorithm}
