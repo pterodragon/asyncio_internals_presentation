@@ -239,24 +239,25 @@ class Loop:
     \frametitle{\lstinline{Task.__step(exc)}}
     \scriptsize
     \begin{lstlisting}[numbers=left]
-def __step(exc):
-    coro = self._coro
-    try:
-        result = coro.send(None)
-    except StopIteration as exc:
-        self.set_result(exc.value)
-    except BaseException as exc:
-        self.set_exception(exc)
-    else:
-        if result <<is a blocking future>>:
-            result.add_done_callback(self.__wakeup)
-        elif result is None:  # bare yield used
-            self._loop.call_soon(self.__step)
+class Task:
+    def __step(exc):
+        coro = self._coro
+        try:
+            result = coro.send(None)
+        except StopIteration as exc:
+            self.set_result(exc.value)
+        except BaseException as exc:
+            self.set_exception(exc)
+        else:
+            if result <<is a blocking future>>:
+                result.add_done_callback(self.__wakeup)
+            elif result is None:  # bare yield used
+                self._loop.call_soon(self.__step)
 
-def __wakeup(self, future):
-    # check if cancelled or errored
-    ...
-    self.__step()
+    def __wakeup(self, future):
+        # check if cancelled or errored
+        ...
+        self.__step()
     \end{lstlisting}
 
 \begin{itemize}
